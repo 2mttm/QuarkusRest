@@ -6,6 +6,7 @@ import com.cedacri.service.SomeExternalService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 import java.util.List;
 
@@ -22,34 +23,36 @@ public class MoviesResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Movie> getMovies() {
-        return externalService.getMovies();
+    public Response getMovies() {
+        return Response.ok(externalService.getMovies()).build();
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Movie getMovie(@PathParam("id") Long id) {
-        return externalService.getMovieById(id);
+    public Response getMovie(@PathParam("id") Long id) {
+        Movie movie = externalService.getMovieById(id);
+        return movie == null ? Response.noContent().build() : Response.ok(movie).build();
     }
 
     @GET
     @Path("/best/{minRating}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Movie> getBestMovies(@PathParam("minRating") double minRating) {
-        return bestMoviesService.findBestMovies(minRating);
+    public Response getBestMovies(@PathParam("minRating") double minRating) {
+        return Response.ok(bestMoviesService.findBestMovies(minRating)).build();
     }
 
     @GET
     @Path("/best")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Movie> getBestMovies() {
-        return getBestMovies(8.0);
+    public Response getBestMovies() {
+        List<Movie> movies = bestMoviesService.findBestMovies(8.0);
+        return !movies.isEmpty() ? Response.ok(movies).build() : Response.noContent().build();
     }
 
     @DELETE
     @Path("/{id}")
-    public boolean deleteMovie(@PathParam("id") Long id) {
-        return externalService.deleteMovie(id);
+    public Response deleteMovie(@PathParam("id") Long id) {
+        return externalService.deleteMovie(id) ? Response.ok().build() : Response.notModified().build();
     }
 }

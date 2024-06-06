@@ -1,37 +1,43 @@
 package com.cedacri.service;
 
 import com.cedacri.model.Movie;
+import com.cedacri.repository.MovieRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
 public class SomeExternalServiceImpl implements SomeExternalService {
-    private List<Movie> movies = new ArrayList<>(Arrays.asList(
-        new Movie(0L, "Titanic", "James Cameron", 7.9),
-        new Movie(1L, "The Matrix", "The Wachowskis", 8.7),
-        new Movie(2L, "Interstellar", "Christopher Nolan", 8.8)
-    ));
+    private final MovieRepository movieRepository;
+
+    @Inject
+    public SomeExternalServiceImpl(MovieRepository movieRepository) {
+        this.movieRepository = movieRepository;
+    }
 
     @Override
     public boolean addMovie(Movie movie) {
-        return movies.add(movie);
+        return movieRepository.addMovie(movie);
+    }
+
+    @Override
+    public Movie updateMovie(Movie movie) {
+        return movieRepository.updateMovie(movie);
     }
 
     @Override
     public Movie getMovieById(Long id) {
-        return movies.stream().filter(movie -> movie.getId().equals(id)).findFirst().orElseThrow();
+        return movieRepository.getMovieById(id);
     }
 
     @Override
     public boolean deleteMovie(Long id) {
-        return movies.removeIf(movie -> id.equals(movie.getId()));
+        return movieRepository.deleteMovie(id);
     }
 
     @Override
     public List<Movie> getMovies() {
-        return movies;
+        return movieRepository.getMovies();
     }
 }

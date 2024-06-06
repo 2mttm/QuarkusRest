@@ -4,6 +4,7 @@ import com.cedacri.model.Movie;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+import java.util.Comparator;
 import java.util.List;
 
 @ApplicationScoped
@@ -19,6 +20,7 @@ public class BestMoviesServiceImpl implements BestMoviesService {
     public List<Movie> findBestMovies(double minRating) {
         return externalService.getMovies().stream()
                 .filter(movie -> movie.getRating() >= minRating)
+                .sorted(Comparator.comparing(Movie::getRating))
                 .toList();
     }
 }
