@@ -65,12 +65,17 @@ class MoviesResourceTest {
     @Test
     public void mockServiceTest() {
         SomeExternalService spyExternalService = spy(externalService);
+
         doReturn(Arrays.asList(
                 new Movie(0L, "Titanic", "James Cameron", 7.9),
                 new Movie(1L, "The Matrix", "The Wachowskis", 8.7)
+        ), Arrays.asList(
+                new Movie(0L, "Titanic", "James Cameron", 7.9)
         )).when(spyExternalService).getMovies();
 
         assertEquals(2, spyExternalService.getMovies().size());
+        assertEquals(1, spyExternalService.getMovies().size());
+
         assertNotNull(spyExternalService.getMovieById(2L));
     }
 
